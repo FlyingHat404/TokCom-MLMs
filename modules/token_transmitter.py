@@ -39,19 +39,31 @@ class text_transmitter(nn.Module):
 
 
 class TokenSelector(nn.Module):
-    def __init__(self, dim, target_len):
+    def __init__(self, dim, target_len, pooling="mean"):
         super().__init__()
         self.target_len = target_len
+        self.pooling = pooling
 
     def forward(self, output_tokens):  # [batch, seq_len, dim]
         batch_size, seq_len, dim = output_tokens.shape
-        
-        indices = torch.linspace(0, seq_len - 1, steps=self.target_len, device=output_tokens.device).long()
-        indices = indices.unsqueeze(0).expand(batch_size, -1)
+        window_size = math.ceil(seq_len / self.target_len)
+        selected_tokens = []
+        for i in range(self.target_len):
+            start = i * window_size
+            end = min((i + 1) * window_size, seq_len)
+            if start >= seq_len:
+                break
+            chunk = output_tokens[:, start:end, :]  # [batch, window, dim]
+            if self.pooling == "mean":
+                pooled = chunk.mean(dim=1)  # [batch, dim]
+            elif self.pooling == "max":
+                pooled = chunk.max(dim=1).values  # [batch, dim]
+            else:
+                raise ValueError(f"Unsupported pooling type: {self.pooling}")
+            selected_tokens.append(pooled)
+        selected_tokens = torch.stack(selected_tokens, dim=1)
 
-        selected_tokens = torch.gather(output_tokens, 1, indices.unsqueeze(-1).expand(-1, -1, dim))
-        
-        return selected_tokens  # [batch, target_len, dim]
+        return selected_tokens
     
 
 class img_transmitter(nn.Module):
@@ -118,5 +130,6 @@ class audio_transmitter(nn.Module):
         target_tokens = self.tokenSelect(output_tokens)
         audio_tokens = self.projection(target_tokens)
         audio_features = self.projection(output_features)
+
 
         return audio_tokens, audio_features
