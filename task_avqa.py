@@ -13,9 +13,10 @@ import matplotlib.pyplot as plt
 from openpyxl import Workbook
 
 DO_TRAIN = True
-DO_VAL = True
-DO_TEST = True
-USE_CKPT = True
+DO_VAL = False
+DO_TEST = False
+USE_Aligned_CKPT = True
+USE_Trained_CKPT = False
 
 SEED = 1111
 random.seed(SEED)
@@ -48,14 +49,25 @@ img_receiver = TokenReceiver(hidden_size, hidden_size).to(device)
 audio_receiver = TokenReceiver(hidden_size, hidden_size).to(device)
 channel = ChannelSimulator(snr_db=snr)
 
-if USE_CKPT:
+if USE_Aligned_CKPT:
     print("-----------------CKPT LOADING--------------")
     checkpoint = torch.load('/mnt/checkpoints/007-multimodal_transceivers.pth', map_location='cpu')
     img_tx.load_state_dict(checkpoint['img_tx'])
     audio_tx.load_state_dict(checkpoint['audio_tx'])
     text_receiver.load_state_dict(checkpoint['text_receiver'])
     img_receiver.load_state_dict(checkpoint['img_receiver'])
-    audio_receiver.load_state_dict(checkpoint['audio_receiver'])   
+    audio_receiver.load_state_dict(checkpoint['audio_receiver'])
+
+if USE_Trained_CKPT:
+    print("-----------------CKPT LOADING--------------")
+    checkpoint = torch.load('/mnt/checkpoints/checkpoint_last.pth', map_location='cpu')
+    model.load_state_dict(checkpoint['model'])
+    text_tx.load_state_dict(checkpoint['text_tx'])
+    img_tx.load_state_dict(checkpoint['img_tx'])
+    audio_tx.load_state_dict(checkpoint['audio_tx'])
+    text_receiver.load_state_dict(checkpoint['text_receiver'])
+    img_receiver.load_state_dict(checkpoint['img_receiver'])
+    audio_receiver.load_state_dict(checkpoint['audio_receiver'])
 
 # optimizer
 optimizer = torch.optim.AdamW(
@@ -196,7 +208,6 @@ if __name__ == '__main__':
     max_iters = 300
     for iter_idx in range(max_iters):
         # print(f"\n---------- Iteration {iter_idx+1}/{max_iters} ----------")
-
         # --- train ---
             if DO_TRAIN:
                 train_batch = next(train_iter)
@@ -204,14 +215,33 @@ if __name__ == '__main__':
                 train_losses.append(loss)
                 print(f"[Train] Iter {iter_idx+1} Loss: {loss:.4f}")
 
-            # --- val ---
-            if DO_VAL:
-                val_batch = next(val_iter)
-                val_loss = val_step(val_batch)
-                val_losses.append(val_loss)
-                print(f"[Val] Iter {iter_idx+1} Loss: {val_loss:.4f}")
+    # --- validation after all training iterations ---
+    if DO_VAL:
+        val_losses = []
+        for val_batch in val_loader:
+            val_loss = val_step(val_batch)
+            val_losses.append(val_loss)
+        print(f"[Val] Average Loss: {np.mean(val_losses):.4f}")
 
-            torch.cuda.empty_cache()
+    # --- save final checkpoint after training ---
+    if DO_TRAIN:
+        ckpt_dir = "/mnt/checkpoints"
+        os.makedirs(ckpt_dir, exist_ok=True)
+        ckpt_path = os.path.join(ckpt_dir, "checkpoint_last.pth")
+        torch.save({
+            "model": model.state_dict(),
+            "text_tx": text_tx.state_dict(),
+            "img_tx": img_tx.state_dict(),
+            "audio_tx": audio_tx.state_dict(),
+            "text_receiver": text_receiver.state_dict(),
+            "img_receiver": img_receiver.state_dict(),
+            "audio_receiver": audio_receiver.state_dict(),
+            "optimizer": optimizer.state_dict(),
+            "train_losses": train_losses,
+            "val_losses": val_losses,
+            "test_accuracies": test_accuracies
+        }, ckpt_path)
+        print(f"[Checkpoint] Saved final checkpoint to {ckpt_path}")
     
     if DO_TEST:
         total_correct = 0
@@ -230,5 +260,4 @@ if __name__ == '__main__':
         test_accuracies.append(overall_acc)
         print(f"[Test] Overall Accuracy: {overall_acc:.4f}")
     
-
     save_results_to_excel_and_plot(train_losses, val_losses, test_accuracies)
