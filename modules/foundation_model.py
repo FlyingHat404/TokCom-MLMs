@@ -52,7 +52,7 @@ class Qwen2ForVQA(nn.Module):
             inputs_embeds=input_embeds, # [batch_size, seq_len, dim]
             attention_mask=attention_mask, # [batch_size, seq_len]
             labels=labels, # torch.Size([batch_size, seq_len)
-            logits_to_keep=0 # only compute the last token
+            logits_to_keep=0
         )
 
         loss = outputs.loss
@@ -67,6 +67,7 @@ class Qwen2ForVQA(nn.Module):
         # decoded_targets = [self.tokenizer.decode(label_id, skip_special_tokens=True) for label_id in labels[:, -1]]
         # for i, (pred, target) in enumerate(zip(decoded_predictions, decoded_targets)):
         #     print(f"[{i}] Pred: {pred}  |  Target: {target}")
+
 
 
         return {"loss": loss, "logits": pred_token_logits}
