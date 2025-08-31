@@ -198,9 +198,6 @@ if __name__ == '__main__':
         # print(f"\n---------- Iteration {iter_idx+1}/{max_iters} ----------")
 
         # --- train ---
-        for iter_idx in range(max_iters):
-            # --- train ---
-        # --- train ---
             if DO_TRAIN:
                 train_batch = next(train_iter)
                 loss = train_step(train_batch)
@@ -233,4 +230,5 @@ if __name__ == '__main__':
         test_accuracies.append(overall_acc)
         print(f"[Test] Overall Accuracy: {overall_acc:.4f}")
     
+
     save_results_to_excel_and_plot(train_losses, val_losses, test_accuracies)
