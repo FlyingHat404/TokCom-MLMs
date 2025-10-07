@@ -1,6 +1,6 @@
-# Token Communication-Driven Multimodal Large Models in Resource-Constrained Multiuser Networks
+# Task-Oriented Multimodal Token Transmission in Resource-Constrained Multiuser Networks
 
-  The code implementation of our proposed token communication paradigm for distributed multimodal large model deployment [(arXiv paper)](https://arxiv.org/abs/2505.07841). By performing cross-modal alignment and task-oriented fine-tuning, out method enables efficient, task-oriented token transmission.
+  The code implementation of our proposed token communication paradigm for distributed multimodal large model deployment [(arXiv paper)](https://arxiv.org/abs/2505.07841). By performing cross-modal alignment and task-oriented fine-tuning, our method enables efficient, task-oriented token transmission.
 
   <!-- ⭐ **The simple and straightforward implementation is suitable to be taken as a baseline :)** -->
 
