@@ -83,7 +83,7 @@ For beginners, it is recommended to set breakpoints to check the shape of tensor
 If you find our work helpful, please consider citing:
 
 ```bibtex
-@ARTICLE{Zhang_2025,
+@ARTICLE{junhe2025,
   author={Zhang, Junhe and Ni, Wanli and Wang, Pengwei and Wang, Dongyu},
   journal={IEEE Wireless Communications Letters}, 
   title={Task-Oriented Multimodal Token Transmission in Resource-Constrained Multiuser Networks}, 
