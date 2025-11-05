@@ -1,7 +1,8 @@
 # Task-Oriented Multimodal Token Transmission in Resource-Constrained Multiuser Networks
 
 This repository is the official implementation of the paper: Task-Oriented Multimodal Token Transmission in Resource-Constrained Multiuser Networks.
-[IEEE WCL](https://ieeexplore.ieee.org/document/11224844) [arXiv](https://arxiv.org/abs/2505.07841).
+
+[[IEEE WCL](https://ieeexplore.ieee.org/document/11224844)], [[arXiv](https://arxiv.org/abs/2505.07841)].
 
 ---
 
