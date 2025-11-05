@@ -1,20 +1,18 @@
 # Task-Oriented Multimodal Token Transmission in Resource-Constrained Multiuser Networks
 
-  The code implementation of our proposed token communication paradigm for distributed multimodal large model deployment [(arXiv paper)](https://arxiv.org/abs/2505.07841). By performing cross-modal alignment and task-oriented fine-tuning, our method enables efficient, task-oriented token transmission.
-
-  <!-- ⭐ **The simple and straightforward implementation is suitable to be taken as a baseline :)** -->
-
+This repository is the official implementation of the paper: Task-Oriented Multimodal Token Transmission in Resource-Constrained Multiuser Networks.
+[IEEE WCL](https://ieeexplore.ieee.org/document/11224844) [arXiv](https://arxiv.org/abs/2505.07841).
 
 ---
 
-## 📁 Dataset Preparation
-The entire training process consists of two stages: **cross-modal alignment** and **task-oriented fine-tuning**.
+## Dataset Preparation
 
-For the cross-modal alignment stage, we use the [VALOR-32K](https://casia-iva-group.github.io/projects/VALOR/data.html) dataset.
-For the task-oriented fine-tuning stage, we use the [MUSIC-AVQA](https://gewu-lab.github.io/MUSIC-AVQA/) dataset.
+The training consists of two stages: **cross-modal alignment** and **task-oriented fine-tuning**.
 
-After downloading the raw data into the corresponding directory, please run ```utils/raw_video_preprocess.py``` to split each video into image frames and extract the associated audio.
-Using the VALOR dataset as an example, the folder structure of the processed data should be organized as follows:
+- **Cross-modal alignment**: [VALOR-32K](https://casia-iva-group.github.io/projects/VALOR/data.html) dataset.  
+- **Task-oriented fine-tuning**: [MUSIC-AVQA](https://gewu-lab.github.io/MUSIC-AVQA/) dataset.  
+
+After downloading the raw data, run `utils/raw_video_preprocess.py` to split videos into image frames and extract audio. Using VALOR as an example, the processed folder structure should be:
 
 ```
 VALOR/
@@ -37,18 +35,17 @@ VALOR/
 
 ---
 
-## 🧠 Model Preparation
+## Model Preparation
 
-- **Foundation model**: [Qwen2.5-1.5B](https://huggingface.co/Qwen/Qwen2.5-1.5B)
-- **Text**: [Qwen2.5-1.5B](https://huggingface.co/Qwen/Qwen2.5-1.5B)
-- **Audio**: [AST (Audio Spectrogram Transformer)](https://huggingface.co/MIT/ast-finetuned-audioset-10-10-0.4593)
-- **Visual**: [ViViT (Video Vision Transformer)](https://huggingface.co/google/vivit-b-16x2)
+- **Foundation model / Text**: [Qwen2.5-1.5B](https://huggingface.co/Qwen/Qwen2.5-1.5B)  
+- **Audio**: [AST (Audio Spectrogram Transformer)](https://huggingface.co/MIT/ast-finetuned-audioset-10-10-0.4593)  
+- **Visual**: [ViViT (Video Vision Transformer)](https://huggingface.co/google/vivit-b-16x2)  
 
-Models can be downloaded from HuggingFace or via `utils/hf-download.py`.
+Models can be downloaded from HuggingFace or using `utils/hf-download.py`.
 
 ---
 
-## 🚀 Training
+## Training
 
 ### Cross-Modal Alignment  
 ```bash
@@ -56,11 +53,7 @@ python task_align.py
 ```
 - Checkpoints will be saved in `checkpoint/xxx.pth` (create the folder beforehand).
 
-We also provide **Rounds vs. Loss curves** and **t-SNE plots** corresponding to different contrastive temperatures during the alignment stage.
-#### Rounds vs. Loss
-<p align="center">
-  <img src="imgs/Temp.png" width="400"/>
-</p>
+We also provide **t-SNE plots** corresponding to different contrastive temperatures.
 
 #### t-SNE Plots with Different Contrastive Temperatures τ
 <p align="center">
@@ -84,27 +77,17 @@ For beginners, it is recommended to set breakpoints to check the shape of tensor
 
 ---
 
-## 📖 Citation
+## Citation
 
 If you find our work helpful, please consider citing:
 
 ```bibtex
-@misc{junhe2025tokcom,
-  title={Token Communication-Driven Multimodal Large Models in Resource-Constrained Multiuser Networks},
-  author={Junhe Zhang and Wanli Ni and Pengwei Wang and Dongyu Wang},
+@ARTICLE{junhe2025wcl,
+  author={Zhang, Junhe and Ni, Wanli and Wang, Pengwei and Wang, Dongyu},
+  journal={IEEE Wireless Communications Letters}, 
+  title={Task-Oriented Multimodal Token Transmission in Resource-Constrained Multiuser Networks}, 
   year={2025},
-  eprint={2505.07841},
-  archivePrefix={arXiv},
-  primaryClass={cs.NI},
-  url={https://arxiv.org/abs/2505.07841}
+  doi={10.1109/LWC.2025.3628928},
+  note={early access}
 }
 ```
-
----
-
-## 🎥 Acknowledgment
-
-Thanks to this excellent tutorial on building your own LLaVA model:  
-👉 [Bilibili Video](https://space.bilibili.com/45156039/lists/3213902)
-
----
